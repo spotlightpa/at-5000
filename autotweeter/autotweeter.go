@@ -172,6 +172,9 @@ func (app *appEnv) Exec() (err error) {
 	app.logf("found %d contexts, %d unused",
 		len(ctxs), len(filteredCtxs))
 
+	if len(filteredCtxs) == 0 {
+		return fmt.Errorf("no unused Tweets remaining")
+	}
 	// random choice
 	if !app.mock {
 		rand.Seed(time.Now().UnixNano())
