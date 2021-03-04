@@ -4,7 +4,7 @@ import (
 	"os"
 
 	"github.com/carlmjohnson/exitcode"
-	"github.com/spotlightpa/sourcesdb/pkg/autotweeter"
+	"github.com/spotlightpa/at-5000/autotweeter"
 )
 
 func main() {

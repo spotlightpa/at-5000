@@ -10,6 +10,7 @@ import (
 	"math/rand"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
 	"text/template"
 	"time"
@@ -17,12 +18,13 @@ import (
 	"github.com/carlmjohnson/flagext"
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
-	"github.com/henvic/ctxsignal"
-	"github.com/spotlightpa/sourcesdb/internal/blob"
+	"github.com/spotlightpa/at-5000/internal/blob"
 )
 
+// AppName is the prefix for environmental variables
 const AppName = "autotweeter"
 
+// CLI runs at-5000
 func CLI(args []string) error {
 	var app appEnv
 	err := app.ParseArgs(args)
@@ -52,8 +54,15 @@ func (app *appEnv) ParseArgs(args []string) error {
 		fl, app.l, "silent", flagext.LogSilent, "don't log debug output")
 
 	fl.Usage = func() {
-		fmt.Fprintf(fl.Output(), `autotweeter - sends Tweets about people
-Options:
+		fmt.Fprintf(fl.Output(),
+			`at-5000 - sends a randomly selected Tweet from a JSON array of choices
+
+Usage:
+
+	at-5000 [options]
+
+Options can also be specified as environment variables prefixed with AUTOTWEETER_.
+
 `)
 		fl.PrintDefaults()
 		fmt.Fprintln(fl.Output(), "")
@@ -111,7 +120,7 @@ Options:
 
 func newContext(d time.Duration) (context.Context, func()) {
 	ctx, c1 := context.WithTimeout(context.Background(), d)
-	ctx, c2 := ctxsignal.WithTermination(ctx)
+	ctx, c2 := signal.NotifyContext(ctx, os.Interrupt, os.Kill)
 	return ctx, func() {
 		defer c1()
 		defer c2()
