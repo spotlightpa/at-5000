@@ -68,7 +68,7 @@ Options can also be specified as environment variables prefixed with AUTOTWEETER
 		fmt.Fprintln(fl.Output(), "")
 	}
 
-	flagext.Callback(fl, "template", "", "Go-style `template` for Tweet text", func(s string) error {
+	fl.Func("template", "Go-style `template` for Tweet text", func(s string) error {
 		var err error
 		app.tmpl, err = template.New("tweet").Parse(s)
 		return err
