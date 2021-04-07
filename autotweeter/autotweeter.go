@@ -164,7 +164,11 @@ func (app *appEnv) Exec() (err error) {
 	// remove items that were tweeted
 	filteredCtxs := ctxs[:0]
 	for _, tmplctx := range ctxs {
-		if _, ok := priorTweets[tmplctx["id"]]; !ok {
+		id, ok := tmplctx["id"].(string)
+		if !ok {
+			return fmt.Errorf(`all source entries must have key "id" with string value`)
+		}
+		if _, ok := priorTweets[id]; !ok {
 			filteredCtxs = append(filteredCtxs, tmplctx)
 		}
 	}
@@ -180,8 +184,9 @@ func (app *appEnv) Exec() (err error) {
 		rand.Seed(time.Now().UnixNano())
 	}
 	tmplctx := filteredCtxs[rand.Intn(len(filteredCtxs))]
+	id, _ := tmplctx["id"].(string)
 
-	app.logf("chose %q", tmplctx["id"])
+	app.logf("chose %q", id)
 
 	// build text
 	var buf strings.Builder
@@ -195,7 +200,7 @@ func (app *appEnv) Exec() (err error) {
 	}
 
 	// update list of old Tweets
-	priorTweets[tmplctx["id"]] = time.Now()
+	priorTweets[id] = time.Now()
 	if err = app.store.Set(ctx, "prior-tweets", &priorTweets); err != nil {
 		return err
 	}
@@ -203,9 +208,9 @@ func (app *appEnv) Exec() (err error) {
 	return err
 }
 
-func (app *appEnv) getContext() ([]map[string]string, error) {
+func (app *appEnv) getContext() ([]map[string]interface{}, error) {
 	dec := json.NewDecoder(app.src)
-	var data []map[string]string
+	var data []map[string]interface{}
 	err := dec.Decode(&data)
 	return data, err
 }
