@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime/debug"
 	"strings"
 	"text/template"
 	"time"
@@ -55,7 +56,7 @@ func (app *appEnv) ParseArgs(args []string) error {
 
 	fl.Usage = func() {
 		fmt.Fprintf(fl.Output(),
-			`at-5000 - sends a randomly selected Tweet from a JSON array of choices
+			`at-5000 %s - sends a randomly selected Tweet from a JSON array of choices
 
 Usage:
 
@@ -63,7 +64,7 @@ Usage:
 
 Options can also be specified as environment variables prefixed with AUTOTWEETER_.
 
-`)
+`, getVersion())
 		fl.PrintDefaults()
 		fmt.Fprintln(fl.Output(), "")
 	}
@@ -116,6 +117,14 @@ Options can also be specified as environment variables prefixed with AUTOTWEETER
 		return err
 	}
 	return nil
+}
+
+func getVersion() string {
+	if i, ok := debug.ReadBuildInfo(); ok {
+		return i.Main.Version
+	}
+
+	return "(unknown)"
 }
 
 func newContext(d time.Duration) (context.Context, func()) {
