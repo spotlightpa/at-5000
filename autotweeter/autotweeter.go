@@ -48,7 +48,7 @@ func (app *appEnv) ParseArgs(args []string) error {
 	consumerKey := fl.String("twitter-consumer-key", "", "")
 	consumerSecret := fl.String("twitter-consumer-secret", "", "")
 
-	getBlob := blob.Var(fl, "blob-url", "`URL` for S3 blob store (mock if not set)")
+	getBlob := blob.Var(fl, "blob-url", "`URL` for S3 blob store (local file if not set)")
 
 	app.l = log.New(nil, AppName+" ", log.LstdFlags)
 	flagext.LoggerVar(
@@ -93,8 +93,7 @@ Options can also be specified as environment variables prefixed with AUTOTWEETER
 			"twitter-access-token",
 			"twitter-access-token-secret",
 			"twitter-consumer-key",
-			"twitter-consumer-secret",
-			"blob-url")
+			"twitter-consumer-secret")
 	}
 
 	if err := flagext.MustHave(fl, musthave...); err != nil {
