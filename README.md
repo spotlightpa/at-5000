@@ -24,9 +24,9 @@ Usage:
 
 Options can also be specified as environment variables prefixed with AUTOTWEETER_.
   -blob-url URL
-        URL for S3 blob store (mock if not set)
+        URL for S3 store of past tweets (uses local file if not set)
   -mock
-        mock calls rather than use real thing
+        mock calls to Twitter rather than use real thing
   -silent
         don't log debug output
   -src file or URL

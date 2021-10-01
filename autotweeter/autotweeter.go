@@ -41,14 +41,14 @@ func CLI(args []string) error {
 func (app *appEnv) ParseArgs(args []string) error {
 	fl := flag.NewFlagSet(AppName, flag.ContinueOnError)
 
-	fl.BoolVar(&app.mock, "mock", false, "mock calls rather than use real thing")
+	fl.BoolVar(&app.mock, "mock", false, "mock calls to Twitter rather than use real thing")
 
 	accessToken := fl.String("twitter-access-token", "", "")
 	accessTokenSecret := fl.String("twitter-access-token-secret", "", "")
 	consumerKey := fl.String("twitter-consumer-key", "", "")
 	consumerSecret := fl.String("twitter-consumer-secret", "", "")
 
-	getBlob := blob.Var(fl, "blob-url", "`URL` for S3 blob store (local file if not set)")
+	getBlob := blob.Var(fl, "blob-url", "`URL` for S3 store of past tweets (uses local file if not set)")
 
 	app.l = log.New(nil, AppName+" ", log.LstdFlags)
 	flagext.LoggerVar(
